@@ -50,7 +50,7 @@ def constructor():
 
 def frame():
     system('cls' if name == 'nt' else 'clear')
-    clear_snake_map()
+    #clear_snake_map()
     move_snake()
     print(snake_map_str())
     print('{:^62}'.format('Segure ESC para sair'))
@@ -69,25 +69,17 @@ def create_snake_map():
         snake_map.append(matrix_column)
 
 
-def clear_snake_map():
-    for y, column in enumerate(snake_map):
-        for x, slot in enumerate(column):
-            if( y == 0 or x == 0 or y == 30 or x == 30 ):
-                pass
-            else:
-                snake_map[y][x] = '  '
-
 def snake_map_str():
     map_str = ''
     for line in snake_map:
-        for collumn in line:
-            map_str += collumn
+        for column in line:
+            map_str += column
         map_str += '\n'
     return map_str
 
 
 def reset_snake_body():
-    for c in range(17,14,-1):
+    for c in range(16,13,-1):
         snake_body.append({
             'x': c,
             'y': 15
@@ -100,7 +92,13 @@ def write_snake_body():
         snake_map[sb['y']][sb['x']] = 'o '
 
 
+def erase_snake_body():
+    for y in range(31):
+        for x in range(31):
+            snake_map[y][x] = snake_map[y][x].replace('o', ' ')
+
 def move_snake():
+    erase_snake_body()
     for index in range(len(snake_body)-1,-1,-1):
         if(index == 0):
             snake_body[index]['x'] += direction['x']
