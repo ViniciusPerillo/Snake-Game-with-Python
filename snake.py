@@ -8,7 +8,7 @@ snake_map = []
 snake_body = []
 food = {}
 direction = {
-    'x': 0,
+    'x': 1,
     'y': 0,
     'is_changed': False 
 }
@@ -43,9 +43,9 @@ def arrow_right_event(evt):
 
 
 #Functions
+#Game
 def constructor():
     create_snake_map()
-    reset_snake_body()
     keyboard.on_release_key('up', arrow_up_event)
     keyboard.on_release_key('down', arrow_down_event)
     keyboard.on_release_key('left', arrow_left_event)
@@ -54,14 +54,34 @@ def constructor():
 
 def frame():
     move_snake()
+    collision()
     eat_food()
-    system('cls' if name == 'nt' else 'clear')
-    print(snake_map_str())
-    print('{:^42}'.format('Segure ESC para sair'))
+    print_game('Segure ESC para sair')
     sleep(0.2)
     
 
+def reset_game():
+    clean_snake_map()
+    reset_snake_body()
+    spawn_food()
+    print_game('Pressione qualquer seta para começar')
+    while not direction['is_changed']:
+        pass
+    start()
 
+
+def start():
+    while not keyboard.is_pressed('esc'):
+        frame()
+
+
+def print_game(msg):
+    system('cls' if name == 'nt' else 'clear')
+    print(snake_map_str())
+    print('{:^42}'.format(msg))
+
+
+#Map
 def create_snake_map():
     for i in range(21):
         matrix_column = []
@@ -86,12 +106,13 @@ def snake_map_str():
         map_str += '\n'
     return map_str
 
-
+#Body
 def reset_snake_body():
+    snake_body.clear()
     for c in range(11,8,-1):
         snake_body.append({
             'x': c,
-            'y': 15
+            'y': 10
         })
         write_snake_body()
 
@@ -125,6 +146,7 @@ def move_snake():
     direction['is_changed'] = False
 
 
+#Food
 def spawn_food():
     food['x'] = randint(1,19)
     food['y'] = randint(1,19)
@@ -133,18 +155,30 @@ def spawn_food():
             spawn_food()
     snake_map[food['y']][food['x']] = 'f '
 
+
 def eat_food():
     if snake_body[0] == food:
         spawn_snake_body(food['x'], food['y'])
         spawn_food()
 
+
+#Collision
+def collision():
+    if is_colliding():
+        reset_game()
+
+
+def is_colliding():
+    if snake_body[0]['x'] == 0 or snake_body[0]['y'] == 0 or snake_body[0]['x'] == 20 or snake_body[0]['y'] == 20:
+        return True
+    for sb_index in range(1,len(snake_body)):
+        if snake_body[sb_index] == snake_body[0]:
+            return True
+    return False
+
+
 #Código principal
 constructor()
-spawn_food()
-print(snake_map_str())
-print('{:^42}'.format('Pressione qualquer seta para começar'))
-while not direction['is_changed']:
-    pass
-while not keyboard.is_pressed('esc'):
-    frame()
+reset_game()
+
     
