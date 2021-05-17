@@ -12,6 +12,7 @@ direction = {
     'y': 0,
     'is_changed': False 
 }
+highscore = 0
 
 #Listeners 
 def arrow_up_event(evt):
@@ -61,6 +62,7 @@ def frame():
     
 
 def reset_game():
+    set_highscore()
     clean_snake_map()
     reset_snake_body()
     spawn_food()
@@ -77,6 +79,8 @@ def start():
 
 def print_game(msg):
     system('cls' if name == 'nt' else 'clear')
+    print('{:<21}'.format(f'Score: {len(snake_body)-3}'), end='')
+    print('{:>20}'.format(f'Highscore: {highscore}'))
     print(snake_map_str())
     print('{:^42}'.format(msg))
 
@@ -175,6 +179,13 @@ def is_colliding():
         if snake_body[sb_index] == snake_body[0]:
             return True
     return False
+
+
+#Highscore
+def set_highscore():
+    global highscore
+    if len(snake_body) > highscore:
+        highscore = len(snake_body)-3
 
 
 #Código principal
